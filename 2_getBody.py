@@ -21,10 +21,7 @@ def main():
     # texts = soup.select("#content")
     # 2. way2 to select the content
     texts = soup.find_all('div', class_='showtxt')
-    # print(texts)
-    # print(texts[0].text.replace('\xa0'*8, '\n1'))
-    # texts = texts[0].text.replace(' \xa0'*8, '\n\n')
-    # print(texts)
+    print(texts[0].text.replace('\xa0'*8, '\n\n'))
 
 
 if __name__ == '__main__':
