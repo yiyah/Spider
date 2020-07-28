@@ -6,11 +6,15 @@ import re
 url = "http://www.biqukan.com/1_1094/5403177.html"
 
 
+def parse_Body():
+    pass    
+
+
 def main():
     html = requests.get(url)
     
     html.encoding = "gb2312"
-    print(html.text)
+    # print(html.text)
     soup = BeautifulSoup(html.text, 'html.parser')
     # print(soup.text)
     # 1. way1 to select the content
