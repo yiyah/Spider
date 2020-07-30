@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import os
+
 
 hostIP = "http://www.biqukan.com"
 mainPage = "http://www.biqukan.com/1_1094/"
@@ -13,7 +13,7 @@ def getCatalogueAndLink(url):
     # step1. get html
     html = requests.get(url)
     html.encoding = 'gb2312'
-    
+
     # step2. parse html
     soup = BeautifulSoup(html.text, 'lxml')
     # get title
@@ -24,7 +24,7 @@ def getCatalogueAndLink(url):
     texts = BeautifulSoup(str(texts[0]), 'lxml')
     # find all a label as list
     a_labels = texts.find_all('a')
-    
+
     # step3. save them and skip the front chapter
     for a_item in a_labels[13:]:
         chapter.append(a_item.string)
