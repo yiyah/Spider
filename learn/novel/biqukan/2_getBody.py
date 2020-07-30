@@ -3,25 +3,38 @@ from bs4 import BeautifulSoup
 import re
 
 
-url = "http://www.biqukan.com/1_1094/5403177.html"
+url = "https://www.biqukan.com/38_38836/497783246.html" 
+# url = "http://www.biqukan.com/1_1094/5403177.html"
 
+def parseBody(url):
+    # step1. get html
+    html = requests.get(url)
+    # encoding
+    html.encoding = "gb2312"
 
-def parse_Body():
-    pass    
+    # step2. parse html
+    soup = BeautifulSoup(html.text, 'lxml')
+    # 2.1 way1 to select the content
+    # texts = soup.select("#content")
+    # 2.1 way2 to select the content
+    texts = soup.find_all('div', class_='showtxt')
 
+    # step3. get the interest content
+    # But now the content also have <div> and 
+    # the content is in one line, so need to split multi line.
+    texts = str(texts[0])
+    texts = texts.replace('<br/>', '\n')
+
+    # step4. parse string
+    soup = BeautifulSoup(texts, 'lxml')
+    texts = soup.find_all('div', class_='showtxt')
+    return texts[0].text
+    
 
 def main():
-    html = requests.get(url)
-    
-    html.encoding = "gb2312"
-    # print(html.text)
-    soup = BeautifulSoup(html.text, 'html.parser')
-    # print(soup.text)
-    # 1. way1 to select the content
-    # texts = soup.select("#content")
-    # 2. way2 to select the content
-    texts = soup.find_all('div', class_='showtxt')
-    print(texts[0].text.replace('\xa0'*8, '\n\n'))
+    text = parseBody(url)
+    with open("html.html", 'w') as f:
+        f.write(text)
 
 
 if __name__ == '__main__':

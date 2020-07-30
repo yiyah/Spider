@@ -4,36 +4,58 @@ import os
 
 
 hostIP = "http://www.biqukan.com"
-mainPage = "http://www.biqukan.com/1_1094/"
+mainPage = "https://www.biqukan.com/73_73450/"
 
 
 def getCatalogueAndLink(url):
+    # declare chapter and it's link is a list
     chapter = []
     chapter_Link = []
+    # step1. get html
     html = requests.get(url)
     html.encoding = 'gb2312'
-    soup = BeautifulSoup(html.text, 'lxml')
-    title = soup.find_all('h2')
-    texts = soup.find_all('div', class_="listmain")
-    texts = BeautifulSoup(str(texts[0]), 'lxml')
     
+    # step2. parse html
+    soup = BeautifulSoup(html.text, 'lxml')
+    # get title
+    title = soup.find_all('h2')
+    # locate the chapter
+    texts = soup.find_all('div', class_="listmain")
+    # parse the string which contained the chapter and it's link
+    texts = BeautifulSoup(str(texts[0]), 'lxml')
+    # find all a label as list
     a_labels = texts.find_all('a')
-    for a_item in a_labels[13:]:
+    
+    # step3. save them and skip the front chapter
+    for a_item in a_labels[12:]:
         chapter.append(a_item.string)
         chapter_Link.append(hostIP+a_item.get('href'))
     return title[0].text, chapter, chapter_Link
 
 
 def parseBody(url):
+    # step1. get html
     html = requests.get(url)
+    # encoding
     html.encoding = "gb2312"
-    soup = BeautifulSoup(html.text, 'html.parser')
-    # print(soup.text)
-    # 1. way1 to select the content
+
+    # step2. parse html
+    soup = BeautifulSoup(html.text, 'lxml')
+    # 2.1 way1 to select the content
     # texts = soup.select("#content")
-    # 2. way2 to select the content
+    # 2.1 way2 to select the content
     texts = soup.find_all('div', class_='showtxt')
-    return texts[0].text.replace('\xa0'*8, '\n'+'\xa0'*2)
+
+    # step3. get the interest content
+    # But now the content also have <div> and 
+    # the content is in one line, so need to split multi line.
+    texts = str(texts[0])
+    texts = texts.replace('<br/>', '\n')
+
+    # step4. parse string
+    soup = BeautifulSoup(texts, 'lxml')
+    texts = soup.find_all('div', class_='showtxt')
+    return texts[0].text
 
 
 def downloadBook(title, chapter, content):
@@ -44,7 +66,10 @@ def downloadBook(title, chapter, content):
 
 def main():
     title, chapter, chapter_Link = getCatalogueAndLink(mainPage)
-    os.makedirs(title)
+    if os.path.exists(title):
+        os.system("rm {}/*".format(title))
+    else:
+        os.mkdir(title)
     for i in range(len(chapter)):
         content = parseBody(chapter_Link[i])
         downloadBook(title, chapter[i], content)
