@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import os
 
 
-hostIP = "http://www.biqukan.com"
 mainPage = "https://www.biqukan.com/73_73450/"
 
 
@@ -14,7 +13,7 @@ def getCatalogueAndLink(url):
     # step1. get html
     html = requests.get(url)
     html.encoding = 'gb2312'
-    
+
     # step2. parse html
     soup = BeautifulSoup(html.text, 'lxml')
     # get title
@@ -25,8 +24,9 @@ def getCatalogueAndLink(url):
     texts = BeautifulSoup(str(texts[0]), 'lxml')
     # find all a label as list
     a_labels = texts.find_all('a')
-    
+
     # step3. save them and skip the front chapter
+    hostIP = "http://www.biqukan.com"
     for a_item in a_labels[12:]:
         chapter.append(a_item.string)
         chapter_Link.append(hostIP+a_item.get('href'))
@@ -47,7 +47,7 @@ def parseBody(url):
     texts = soup.find_all('div', class_='showtxt')
 
     # step3. get the interest content
-    # But now the content also have <div> and 
+    # But now the content also have <div> and
     # the content is in one line, so need to split multi line.
     texts = str(texts[0])
     texts = texts.replace('<br/>', '\n')
