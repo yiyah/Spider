@@ -1,7 +1,6 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from urllib.request import urlretrieve
 from contextlib import closing
 
 url = "https://www.dmzj.com/view/yaoshenji/76532.html"  # note that do not contain "#@page=x"
@@ -34,7 +33,7 @@ def getImgURl(url):
 
 
 def DownloadImg(url, path):
-    # urlretrieve(url, path)
+    # urlretrieve(url, path)  # need refer, so this method is unavailable
     download_header = {
         'Referer': 'https://www.dmzj.com/view/yaoshenji/41917.html'
     }
@@ -43,7 +42,7 @@ def DownloadImg(url, path):
         content_size = int(response.headers['content-length'])  
         if response.status_code == 200:
             print('文件大小:%0.2f KB' % (content_size / chunk_size))
-            with open('1.jpg', "wb") as file:
+            with open(path, "wb") as file:
                 for data in response.iter_content(chunk_size=chunk_size):  
                     file.write(data)
         else:
@@ -54,7 +53,7 @@ def main():
     imgURLList = getImgURl(url)
     with open("html.html", 'w') as f:
         for i in range(len(imgURLList)):
-            DownloadImg(str(imgURLList[i]), "%d.jpg" % (i))
+            DownloadImg(str(imgURLList[i]), "%d.jpg" % (i+1))
             f.write(str(imgURLList[i])+'\n')
 
 
