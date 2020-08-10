@@ -6,6 +6,7 @@ from contextlib import closing
 import os
 import time
 
+
 url = 'https://www.dmzj.com/info/yaoshenji.html'
 
 
