@@ -7,7 +7,10 @@ url = 'http://www.jisudhw.com/?m=vod-detail-id-62426.html'
 
 
 def getVideoPicsLink(url):
-    video_piece_links = []
+    video_piece_num = 0  # 电影集数
+    video_piece_links = []  # 电影每一集的链接，用列表保存
+    video_piece_dic = {}  # 电影每一集的链接，用字典保存
+
     headers = {
         'Host': 'www.jisudhw.com',
         'Referer': 'http://www.jisudhw.com/index.php?m=vod-search',
@@ -15,19 +18,18 @@ def getVideoPicsLink(url):
     }
     html = requests.get(url, headers=headers)
     soup = BeautifulSoup(html.text, 'lxml')
-    h3_list = soup.find_all('h3')
-    # 应该找h3 的 parent 的 div 就可以包括链接的 ul
-    if len(h3_list) > 1:
-        for h3 in h3_list:
-            for text in h3.span:
-                if 'm3u8' in text.string:
-                    video_piece_links = h3
-                    break
+    input_list = soup.find_all('input')
+    for url in input_list:
+        if 'm3u8' in url.get('value'):
+            video_piece_num += 1
+            video_piece_links.append(url.get('value'))
+            video_piece_dic[url.get('value')] = video_piece_num
     
     return video_piece_links
 
 def main():
     video_piece_links = getVideoPicsLink(url)
+    print(len(video_piece_links))
     with open('html1.html', 'w') as f:
         f.write(str(video_piece_links))
 
